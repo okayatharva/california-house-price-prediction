@@ -1,3 +1,6 @@
+import warnings
+warnings.filterwarnings("ignore")  # Suppress non-critical user warnings
+
 import joblib
 import numpy as np
 import pandas as pd
@@ -39,19 +42,23 @@ print(results_df.round(4))
 # 3. Fine-Tune Best Model (Random Forest)
 print("\n--- Running GridSearchCV for Random Forest ---")
 param_grid = {
-    'n_estimators': [50, 100],
-    'max_depth': [10, 20, None]
+    "n_estimators": [100, 200, 300],
+    "max_depth": [None, 10, 20],
+    "min_samples_split": [2, 5],
 }
+
+# Pass n_jobs=-1 to GridSearchCV while keeping the base estimator single-threaded per fit
 grid_search = GridSearchCV(
-    RandomForestRegressor(random_state=42, n_jobs=-1),
+    RandomForestRegressor(random_state=42),
     param_grid,
-    cv=3,
-    scoring='r2'
+    cv=5,
+    scoring="r2",
+    n_jobs=-1,
 )
 grid_search.fit(X_train, y_train)
 
 best_model = grid_search.best_estimator_
-print("Best Hyperparameters:", grid_search.best_params_)
+print("Best parameters:", grid_search.best_params_)
 
 # 4. Save Model & Scaler Artifacts
 joblib.dump(best_model, "models/best_model.pkl")
