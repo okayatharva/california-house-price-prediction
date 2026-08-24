@@ -1,5 +1,7 @@
 # 🏠 California House Price Prediction
 
+🚀 **Live Interactive App:** [Launch Web App](https://california-house-price-predictor09.streamlit.app)
+
 An end-to-end Machine Learning pipeline and interactive Streamlit web application to predict California median home values using the California Housing dataset.
 
 ---
