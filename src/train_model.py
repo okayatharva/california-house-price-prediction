@@ -1,9 +1,10 @@
-import warnings
-warnings.filterwarnings("ignore")  # Suppress non-critical user warnings
-
+import os
 import joblib
 import numpy as np
 import pandas as pd
+import warnings
+warnings.filterwarnings("ignore")  # Suppress non-critical user warnings
+
 from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
@@ -39,19 +40,17 @@ results_df = pd.DataFrame(results).T
 print("--- Baseline Model Comparison ---")
 print(results_df.round(4))
 
-# 3. Fine-Tune Best Model (Random Forest)
+# 3. Fine-Tune Best Model (Optimized grid for cloud execution)
 print("\n--- Running GridSearchCV for Random Forest ---")
 param_grid = {
-    "n_estimators": [100, 200, 300],
-    "max_depth": [None, 10, 20],
-    "min_samples_split": [2, 5],
+    "n_estimators": [100, 200],
+    "max_depth": [10, 20],
 }
 
-# Pass n_jobs=-1 to GridSearchCV while keeping the base estimator single-threaded per fit
 grid_search = GridSearchCV(
     RandomForestRegressor(random_state=42),
     param_grid,
-    cv=5,
+    cv=3,
     scoring="r2",
     n_jobs=-1,
 )
@@ -61,6 +60,7 @@ best_model = grid_search.best_estimator_
 print("Best parameters:", grid_search.best_params_)
 
 # 4. Save Model & Scaler Artifacts
+os.makedirs("models", exist_ok=True)
 joblib.dump(best_model, "models/best_model.pkl")
 joblib.dump(scaler, "models/scaler.pkl")
 print("\nSaved best_model.pkl and scaler.pkl to models/")
