@@ -11,7 +11,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 from src.load_data import load_data
-from preprocess import preprocess
+from src.preprocess import preprocess
 
 # 1. Load Data & Preprocess
 df = load_data()
