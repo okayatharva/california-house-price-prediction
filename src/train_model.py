@@ -3,12 +3,11 @@ import joblib
 import numpy as np
 import pandas as pd
 import warnings
-warnings.filterwarnings("ignore")  # Suppress non-critical user warnings
+warnings.filterwarnings("ignore")
 
 from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 from src.load_data import load_data
@@ -22,7 +21,7 @@ X_train, X_test, y_train, y_test, scaler, feature_names = preprocess(df)
 models = {
     "Linear Regression": LinearRegression(),
     "Decision Tree": DecisionTreeRegressor(random_state=42),
-    "Random Forest": RandomForestRegressor(random_state=42, n_jobs=-1),
+    "Random Forest": RandomForestRegressor(n_estimators=100, max_depth=15, random_state=42, n_jobs=-1),
 }
 
 results = {}
@@ -40,24 +39,8 @@ results_df = pd.DataFrame(results).T
 print("--- Baseline Model Comparison ---")
 print(results_df.round(4))
 
-# 3. Fine-Tune Best Model (Optimized grid for cloud execution)
-print("\n--- Running GridSearchCV for Random Forest ---")
-param_grid = {
-    "n_estimators": [100, 200],
-    "max_depth": [10, 20],
-}
-
-grid_search = GridSearchCV(
-    RandomForestRegressor(random_state=42),
-    param_grid,
-    cv=3,
-    scoring="r2",
-    n_jobs=-1,
-)
-grid_search.fit(X_train, y_train)
-
-best_model = grid_search.best_estimator_
-print("Best parameters:", grid_search.best_params_)
+# 3. Fit Best Model Directly (Fast for Cloud)
+best_model = models["Random Forest"]
 
 # 4. Save Model & Scaler Artifacts
 os.makedirs("models", exist_ok=True)
