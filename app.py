@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import joblib
 import numpy as np
@@ -7,8 +8,15 @@ st.set_page_config(page_title="California House Price Predictor", page_icon="üè
 
 @st.cache_resource
 def load_artifacts():
-    model = joblib.load("models/best_model.pkl")
-    scaler = joblib.load("models/scaler.pkl")
+    model_path = "models/best_model.pkl"
+    scaler_path = "models/scaler.pkl"
+    
+    # Train model if .pkl files are missing on Streamlit Cloud
+    if not os.path.exists(model_path) or not os.path.exists(scaler_path):
+        import src.train_model
+        
+    model = joblib.load(model_path)
+    scaler = joblib.load(scaler_path)
     return model, scaler
 
 model, scaler = load_artifacts()
