@@ -10,7 +10,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
-from load_data import load_data
+from src.load_data import load_data
 from preprocess import preprocess
 
 # 1. Load Data & Preprocess
